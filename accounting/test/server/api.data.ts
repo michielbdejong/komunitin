@@ -75,12 +75,6 @@ export const testCreditCommonsNeighbour = (peerNodePath: string, ourNodePath: st
   }
 })
 
-export const testCreditCommonsTransaction = (transaction: CreditCommonsTransaction) => ({
-  data: {
-    attributes: transaction
-  }
-})
-
 export const userAuth = (userId: string) => ({
   user: userId,
   scopes: [Scope.Accounting]

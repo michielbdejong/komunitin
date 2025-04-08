@@ -66,7 +66,7 @@ export function getRoutes(controller: SharedController) {
       const ctx = context(req)
       const currencyController = await controller.getCurrencyController(req.params.code)
       const response = await currencyController.creditCommons.createTransaction(ctx, req.body)
-      res.status(200).json(response)
+      res.status(201).json(response)
     }),
   )
 
