@@ -176,13 +176,13 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
   }
   async createTransaction(ctx: Context, transaction: CreditCommonsTransaction) {
     const { vostroId, ourNodePath } = await this.checkLastHashAuth(ctx)
-    const ledgerBase = `$PourNodePath}/`
+    const ledgerBase = `${ourNodePath}/`
     let netGain = 0
     let recipient = null
     let metas: string[] = []
     let froms: string[] = []
     for (let i=0; i < transaction.entries.length; i++) {
-      let payer, payee, thisRecipient;
+      let thisRecipient;
       if (transaction.entries[i].payer.startsWith(ledgerBase)) {
         thisRecipient = transaction.entries[i].payer.slice(ledgerBase.length)
         netGain -= transaction.entries[i].quant
