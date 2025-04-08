@@ -2,6 +2,7 @@ import { Account } from "./account";
 
 export interface CreditCommonsNode {
   ccNodeName: string,
+  routingPrefix: string,
   lastHash: string,
   vostroId: string,
 }
