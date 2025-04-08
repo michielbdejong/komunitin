@@ -2,7 +2,7 @@ import { body } from "express-validator"
 
 export namespace CreditCommonsValidators {
   export const isGraft = () => [
-    body("data.attributes.ccNodeName").isString(),
+    body("data.attributes.peerNodePath").isString(),
     body("data.attributes.ourNodePath").isString(),
     body("data.attributes.lastHash").isString(),
     body("data.attributes.vostroId").isString(),

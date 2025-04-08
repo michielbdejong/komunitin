@@ -36,7 +36,7 @@ describe('grafting', async () => {
       testCreditCommonsNeighbour( 'trunk', 'trunk/branch2', 'asdf', t.account0.id),
       userAuth("0"),
       201)
-    assert.equal(response.text, '{"data":{"type":"creditCommonsNodes","attributes":{"ccNodeName":"trunk","lastHash":"asdf"}}}')
+    assert.equal(response.text, '{"data":{"type":"creditCommonsNodes","attributes":{"peerNodePath":"trunk","lastHash":"asdf"}}}')
   })
 
 })

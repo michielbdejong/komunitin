@@ -19,7 +19,7 @@ function formatDateTime(d: Date) {
 
 export interface CreditCommonsController {
   getWelcome(ctx: Context): Promise<{ message: string }>
-  createNode(ctx: Context, ccNodeName: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode>
+  createNode(ctx: Context, peerNodePath: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode>
   createTransaction(ctx: Context, transaction: CreditCommonsTransaction): Promise<{
     data: CreditCommonsEntry[],
     meta: {
@@ -89,13 +89,13 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     }
   }
   
-  async createNode(ctx: Context, ccNodeName: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode> {
+  async createNode(ctx: Context, peerNodePath: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode> {
     // Only admins are allowed to set the trunkward node:
     await this.users().checkAdmin(ctx)
     await this.db().creditCommonsNode.create({
       data: {
         tenantId: this.db().tenantId,
-        ccNodeName,
+        peerNodePath,
         ourNodePath,
         lastHash,
         vostroId,
@@ -103,7 +103,7 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     });
 
     return {
-      ccNodeName,
+      peerNodePath,
       lastHash
     } as CreditCommonsNode;
   }
@@ -115,8 +115,8 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     if (!record) {
       throw unauthorized('This currency has not (yet) been grafted onto any CreditCommons tree.')
     }
-    if (record.ccNodeName !== ctx.lastHashAuth?.ccNodeName) {
-      throw unauthorized(`cc-node ${JSON.stringify(ctx.lastHashAuth?.ccNodeName)} is not our trunkward node.`)
+    if (record.peerNodePath !== ctx.lastHashAuth?.peerNodePath) {
+      throw unauthorized(`cc-node ${JSON.stringify(ctx.lastHashAuth?.peerNodePath)} is not our trunkward node.`)
     }
     if (record.lastHash !== ctx.lastHashAuth?.lastHash) {
       throw unauthorized(`value of last-hash header ${JSON.stringify(ctx.lastHashAuth?.lastHash)} does not match our records.`)

@@ -1,7 +1,7 @@
 import { Account } from "./account";
 
 export interface CreditCommonsNode {
-  ccNodeName: string,
+  peerNodePath: string,
   ourNodePath: string,
   lastHash: string,
   vostroId: string,

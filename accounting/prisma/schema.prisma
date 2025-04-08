@@ -286,7 +286,7 @@ model Value {
 
 model CreditCommonsNode {
   tenantId      String @default(dbgenerated("(current_setting('app.current_tenant_id'))::text")) @db.VarChar(31)
-  ccNodeName    String @db.VarChar(255)
+  peerNodePath    String @db.VarChar(255)
   ourNodePath String @db.VarChar(255)
   lastHash      String @db.VarChar(255)
 
@@ -294,5 +294,5 @@ model CreditCommonsNode {
   vostroId String
   vostro   Account @relation(fields: [vostroId, tenantId], references: [id, tenantId])
 
-  @@id([tenantId, ccNodeName])
+  @@id([tenantId, peerNodePath])
 }
