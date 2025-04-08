@@ -40,8 +40,6 @@ export interface CreditCommonsController {
 }
 
 export class CreditCommonsControllerImpl extends AbstractCurrencyController implements CreditCommonsController {
-  gatewayAccountId: string = '0';
-  ledgerBase: string = 'trunk/branch2/'
   private async getTransactions(accountId: string): Promise<{ transfersIn: Transfer[], transfersOut: Transfer[] }> {
     return {
       transfersIn: (await this.transfers().getTransfers(systemContext(), {
@@ -107,11 +105,12 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
       lastHash
     } as CreditCommonsNode;
   }
-  async checkLastHashAuth(ctx: Context): Promise<string> {
+  async checkLastHashAuth(ctx: Context): Promise<{ vostroId: string, ourNodePath: string }> {
     if (ctx.type !== 'last-hash') {
       throw new Error('no last-hash auth found in context')
     }
     const record = await this.db().creditCommonsNode.findFirst({})
+    console.log('checkLastAuth', record)
     if (!record) {
       throw unauthorized('This currency has not (yet) been grafted onto any CreditCommons tree.')
     }
@@ -121,7 +120,10 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     if (record.lastHash !== ctx.lastHashAuth?.lastHash) {
       throw unauthorized(`value of last-hash header ${JSON.stringify(ctx.lastHashAuth?.lastHash)} does not match our records.`)
     }
-    return record.vostroId
+    return {
+      vostroId: record.vostroId,
+      ourNodePath: record.ourNodePath,
+    }
   }
   async getWelcome(ctx: Context) {
     await this.checkLastHashAuth(ctx)
@@ -169,24 +171,28 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     })
     return record?.id
   }
+  private async getOurNodePath(peerNodePath: string) {
+
+  }
   async createTransaction(ctx: Context, transaction: CreditCommonsTransaction) {
-    this.gatewayAccountId = await this.checkLastHashAuth(ctx)
+    const { vostroId, ourNodePath } = await this.checkLastHashAuth(ctx)
+    const ledgerBase = `$PourNodePath}/`
     let netGain = 0
     let recipient = null
     let metas: string[] = []
     let froms: string[] = []
     for (let i=0; i < transaction.entries.length; i++) {
       let payer, payee, thisRecipient;
-      if (transaction.entries[i].payer.startsWith(this.ledgerBase)) {
-        thisRecipient = transaction.entries[i].payer.slice(this.ledgerBase.length)
+      if (transaction.entries[i].payer.startsWith(ledgerBase)) {
+        thisRecipient = transaction.entries[i].payer.slice(ledgerBase.length)
         netGain -= transaction.entries[i].quant
         metas.push(`-${transaction.entries[i].quant} (${transaction.entries[i].description})`)
       }
-      if (transaction.entries[i].payee.startsWith(this.ledgerBase)) {
+      if (transaction.entries[i].payee.startsWith(ledgerBase)) {
         if (thisRecipient) {
           throw new Error('Payer and Payee cannot both be local')
         }
-        thisRecipient = transaction.entries[i].payee.slice(this.ledgerBase.length)
+        thisRecipient = transaction.entries[i].payee.slice(ledgerBase.length)
         netGain += transaction.entries[i].quant
         metas.push(`+${transaction.entries[i].quant} (${transaction.entries[i].description})`)
         froms.push(transaction.entries[i].payer)
@@ -209,14 +215,13 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     if (recipient) {
        payeeId = await this.codeToAccountId(recipient);
     }
-    console.log('found payeeId for recipient', payeeId, recipient)
     if (payeeId) {
       let localTransfer: InputTransfer = {
         id: transaction.uuid,
         state: 'committed',
         amount: this.currencyController.amountFromLedger(netGain.toString()),
         meta: `From Credit Commons [${froms.join(', ')}]:` + metas.join(' '),
-        payer: { id: this.gatewayAccountId, type: 'account' },
+        payer: { id: vostroId, type: 'account' },
         payee: { id: payeeId, type: 'account' },
       }
       await this.transfers().createTransfer(systemContext(), localTransfer)

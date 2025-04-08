@@ -2235,7 +2235,7 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "example": "abb54eb8-2b04-4d31-9e8c-8dce6855b6af"
+            "example": "165ec78c-87d4-49f1-bbc7-f533a449d8c8"
           },
           {
             "type": "string",
@@ -5158,7 +5158,86 @@
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "attributes": {
+                      "type": "object",
+                      "properties": {
+                        "uuid": {
+                          "type": "string",
+                          "example": "3d8ebb9f-6a29-42cb-9d39-9ee0a6bf7f1c"
+                        },
+                        "state": {
+                          "type": "string",
+                          "example": "V"
+                        },
+                        "workflow": {
+                          "type": "string",
+                          "example": "|P-PC+CX+"
+                        },
+                        "entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "payee": {
+                                "type": "string"
+                              },
+                              "payer": {
+                                "type": "string"
+                              },
+                              "quant": {
+                                "type": "number"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "type": "object",
+                                "properties": {
+                                  "foo": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "payee",
+                              "payer",
+                              "quant",
+                              "description",
+                              "metadata"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "payee": "trunk/branch2/165ec78c-87d4-49f1-bbc7-f533a449d8c8",
+                              "payer": "trunk/branch/twig/alice",
+                              "quant": 432,
+                              "description": "test long distance for 3 from leaf",
+                              "metadata": {
+                                "foo": "bar"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -5171,11 +5250,27 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /TEST/cc/transaction</pre>\n</body>\n</html>\n"
+            }
           }
         },
         "tags": [],
         "produces": [
-          "application/vnd.api+json"
+          "application/vnd.api+json",
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     }
