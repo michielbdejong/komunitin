@@ -99,7 +99,7 @@ describe('Input validation', async () => {
         attributes: {
           ccNodeName: 'trunk',
           lastHash: 'asdf',
-          routingPrefix: 'trunk/branch2',
+          ourNodePath: 'trunk/branch2',
           vostroId: '3bc8e447-32cb-4dc7-b7ec-6a6f33c6c99'
           // \"$VOSTRO\"},\"relationships\":{\"vostro\":{\"data\":{\"type\":\"accounts\",\"id\":\"$VOSTRO\"}}}}
         },

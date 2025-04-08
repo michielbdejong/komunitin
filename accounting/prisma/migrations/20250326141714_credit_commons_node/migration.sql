@@ -2,7 +2,7 @@
 CREATE TABLE "CreditCommonsNode" (
     "tenantId" VARCHAR(31) NOT NULL DEFAULT (current_setting('app.current_tenant_id'))::text,
     "ccNodeName" VARCHAR(255) NOT NULL,
-    "routingPrefix" VARCHAR(255) NOT NULL,
+    "ourNodePath" VARCHAR(255) NOT NULL,
     "lastHash" VARCHAR(255) NOT NULL,
     "vostroId" TEXT NOT NULL,
 

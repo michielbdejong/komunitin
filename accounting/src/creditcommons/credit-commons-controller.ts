@@ -19,7 +19,7 @@ function formatDateTime(d: Date) {
 
 export interface CreditCommonsController {
   getWelcome(ctx: Context): Promise<{ message: string }>
-  createNode(ctx: Context, ccNodeName: string, routingPrefix: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode>
+  createNode(ctx: Context, ccNodeName: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode>
   createTransaction(ctx: Context, transaction: CreditCommonsTransaction): Promise<{
     data: CreditCommonsEntry[],
     meta: {
@@ -89,14 +89,14 @@ export class CreditCommonsControllerImpl extends AbstractCurrencyController impl
     }
   }
   
-  async createNode(ctx: Context, ccNodeName: string, routingPrefix: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode> {
+  async createNode(ctx: Context, ccNodeName: string, ourNodePath: string, lastHash: string, vostroId: string): Promise<CreditCommonsNode> {
     // Only admins are allowed to set the trunkward node:
     await this.users().checkAdmin(ctx)
     await this.db().creditCommonsNode.create({
       data: {
         tenantId: this.db().tenantId,
         ccNodeName,
-        routingPrefix,
+        ourNodePath,
         lastHash,
         vostroId,
       }

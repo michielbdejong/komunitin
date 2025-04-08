@@ -61,11 +61,11 @@ export const testTransfer = (payerId: string, payeeId: string, amount: number, m
   }
 })
 
-export const testCreditCommonsNeighbour = (ccNodeName: string, routingPrefix: string, lastHash: string, vostroId: string) => ({
+export const testCreditCommonsNeighbour = (ccNodeName: string, ourNodePath: string, lastHash: string, vostroId: string) => ({
   data: {
     attributes: {
       ccNodeName,
-      routingPrefix,
+      ourNodePath,
       lastHash,
       vostroId
     },

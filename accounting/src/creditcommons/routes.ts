@@ -42,7 +42,7 @@ export function getRoutes(controller: SharedController) {
     currencyInputHandler(controller, async (currencyController, ctx, data: CreditCommonsNode) => {
       // setResponseTrace(req, res)
       console.log(data)
-      return await currencyController.creditCommons.createNode(ctx, data.ccNodeName, data.routingPrefix, data.lastHash, data.vostroId)
+      return await currencyController.creditCommons.createNode(ctx, data.ccNodeName, data.ourNodePath, data.lastHash, data.vostroId)
     }, CreditCommonsNodeSerializer, 201),
   )
 
